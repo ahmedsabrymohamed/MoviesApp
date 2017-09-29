@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#302a2a"
+    tools:context="com.example.mine.popularmovies.MainPageActivity">
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:paddingBottom="16dp"
+        android:paddingStart="10dp"
+        android:paddingTop="16dp"
+        android:id="@+id/moviesGrid"
+        android:scrollbars="vertical"
+        android:fadeScrollbars="true"
+        />
+
+
+</FrameLayout>
