@@ -18,8 +18,7 @@
         <com.facebook.drawee.view.SimpleDraweeView
                 android:id="@+id/movieDraweeView"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="2"
+                android:layout_height="wrap_content"
             android:elevation="2dp"
                 android:fadingEdge="vertical"
                 fresco:actualImageScaleType="fitXY"
@@ -32,8 +31,7 @@
         <TextView
             android:id="@+id/movieOriginalTitle"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="0.5"
+            android:layout_height="wrap_content"
             android:padding="3dp"
             android:text="movieOriginalTitle"
             android:textColor="#fff"
@@ -41,8 +39,7 @@
             android:textStyle="bold" />
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="2">
+            android:layout_height="wrap_content">
 
             <LinearLayout
                 android:id="@+id/movieOverviewLayout"
@@ -57,6 +54,8 @@
                     android:layout_height="wrap_content"
                     android:scaleX="0.5"
                     android:scaleY="0.5"
+                    android:numStars="5"
+                    android:isIndicator="true"
                     />
 
                 <TextView

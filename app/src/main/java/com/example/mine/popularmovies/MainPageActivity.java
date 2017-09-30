@@ -19,6 +19,7 @@ public class MainPageActivity extends AppCompatActivity implements GridAdapter.S
     private RecyclerView moviesGrid;
     private GridAdapter gridAdapter;
     private Integer pageNumber=1;
+    private static final String API_KEY = BuildConfig.APIKey;
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,9 +95,7 @@ public class MainPageActivity extends AppCompatActivity implements GridAdapter.S
 
         String moviesCategory = settings.getString(SETTINGS_SELECTED, "popular");
 
-        String APIKey = getString(R.string.APIKey);
-
-        URL url = Network.buildURL(APIKey, moviesCategory, pageNumber);
+        URL url = Network.buildURL(API_KEY, moviesCategory, pageNumber);
 
         FetchMovies fetchMovies = new FetchMovies(gridAdapter);
 

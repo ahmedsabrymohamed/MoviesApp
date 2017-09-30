@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">PopularMovies</string>
-    <string name="APIKey">ba5fe64f6c986d5f5e48e3843135b6bf</string>
     <string name="settingData">com.example.mine.popularmovies.settings</string>
     <string name="popular">Popular</string>
     <string name="top_rated">Top Rated</string>

@@ -8,8 +8,11 @@ import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import android.util.DisplayMetrics;
+import android.widget.LinearLayout;
 import android.widget.RatingBar;
 
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 
@@ -45,6 +48,9 @@ public class DetailActivity extends AppCompatActivity {
         }
 
 
+        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+        float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
+        float dpHeight = displayMetrics.heightPixels / displayMetrics.density;
 
         SimpleDraweeView moviePoster = (SimpleDraweeView) findViewById(R.id.movieDraweeView);
 
@@ -70,10 +76,24 @@ public class DetailActivity extends AppCompatActivity {
         TextView voteCount = (TextView) findViewById(R.id.movieVoteCount);
         voteCount.setText(getString(R.string.voteCount)+movie.getVoteCount());
 
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)moviePoster.getLayoutParams();
+
+
+
         String poster=movie.getPosterPath();
 
+        params.width = LinearLayout.LayoutParams.MATCH_PARENT;
+        params.height =(int)(dpHeight*0.65);
+
         if(orientation== Configuration.ORIENTATION_LANDSCAPE)
+        {
             poster=movie.getBackDropPath();
+            params.width = (int)(dpHeight*0.35);
+            params.height =LinearLayout.LayoutParams.MATCH_PARENT;
+        }
+
+
+        moviePoster.setLayoutParams(params);
 
         Uri uri=Uri.parse(BaseURL+poster);
         ImageRequest request = ImageRequestBuilder.newBuilderWithSource(uri)
