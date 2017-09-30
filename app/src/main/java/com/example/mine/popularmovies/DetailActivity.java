@@ -12,7 +12,6 @@ import android.util.DisplayMetrics;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
 
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 
@@ -70,7 +69,7 @@ public class DetailActivity extends AppCompatActivity {
         TextView movieReleaseDate = (TextView) findViewById(R.id.movieReleaseDate);
         movieReleaseDate.setText(getString(R.string.releaseDate)+movie.getReleaseDate());
 
-        TextView adult = movieOriginalTitle = (TextView) findViewById(R.id.movieType);
+        TextView adult =(TextView) findViewById(R.id.movieType);
         adult.setText((movie.isAdult()?getString(R.string.adult):getString(R.string.family)));
 
         TextView voteCount = (TextView) findViewById(R.id.movieVoteCount);
@@ -88,7 +87,7 @@ public class DetailActivity extends AppCompatActivity {
         if(orientation== Configuration.ORIENTATION_LANDSCAPE)
         {
             poster=movie.getBackDropPath();
-            params.width = (int)(dpHeight*0.35);
+            params.width = (int)(dpWidth*0.35);
             params.height =LinearLayout.LayoutParams.MATCH_PARENT;
         }
 

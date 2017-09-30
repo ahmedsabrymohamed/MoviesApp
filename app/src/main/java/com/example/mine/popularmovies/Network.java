@@ -27,7 +27,6 @@ class Network {
                 .appendQueryParameter(QUERY_LANGUAGE,LANGUAGE)
                 .appendQueryParameter(QUERY_PAGE,pageNumber.toString()).build();
 
-       // Log.d("ahmed", "refresh: "+uri.toString());
 
         URL url=null;
 

@@ -33,7 +33,6 @@ class FetchMovies extends AsyncTask<URL,Void,ArrayList<Movie>> {
         try {
 
             JSONData=fetchJSON(urls[0]);
-           // Log.d("ahmed", "parseJSON: "+JSONData);
             return parseJSON(JSONData);
 
         }

@@ -49,7 +49,7 @@ public class GridAdapter extends RecyclerView.Adapter<GridAdapter.GridViewHolder
 
 
         Uri uri=Uri.parse(BaseURL+movies.get(position).getPosterPath());
-        //Log.d("ahmed", "GridViewHolder: "+uri.toString());
+
         ImageRequest request = ImageRequestBuilder.newBuilderWithSource(uri)
                 .setResizeOptions(new ResizeOptions(500, 500))
                 .build();
