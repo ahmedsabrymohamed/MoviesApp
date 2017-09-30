@@ -6,5 +6,10 @@
     <string name="top_rated">Top Rated</string>
     <string name="upcoming">Upcoming</string>
     <string name="now_playing">Now Playing</string>
+    <string name="language">Language: </string>
+    <string name="family">Family Movie</string>
+    <string name="adult">Adult Movie</string>
+    <string name="releaseDate">Release Date: </string>
+    <string name="voteCount">Vote Count: </string>
 
 </resources>

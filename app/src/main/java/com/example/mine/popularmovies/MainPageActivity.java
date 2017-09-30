@@ -2,7 +2,6 @@ package com.example.mine.popularmovies;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -10,7 +9,6 @@ import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import java.net.URL;
 
@@ -18,7 +16,6 @@ public class MainPageActivity extends AppCompatActivity implements GridAdapter.S
 
     private final static String SETTINGS_SELECTED = "selectedCategory";
     private SharedPreferences settings;
-    private Toast mToast;
     private RecyclerView moviesGrid;
     private GridAdapter gridAdapter;
     private Integer pageNumber=1;
@@ -27,16 +24,10 @@ public class MainPageActivity extends AppCompatActivity implements GridAdapter.S
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
-        float dpHeight = displayMetrics.heightPixels / displayMetrics.density;
         float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
         int moviesNumber=((int)dpWidth/101);
-       // int orientation=getResources().getConfiguration().orientation;
-       // int moviesNumber=3;
-       // if(orientation== Configuration.ORIENTATION_LANDSCAPE)
-       //     moviesNumber=6;
         setContentView(R.layout.activity_main_page);
         settings = getSharedPreferences(getString(R.string.settingData), MODE_PRIVATE);
-        mToast = null;
         gridAdapter = new GridAdapter(this);
         moviesGrid = (RecyclerView) findViewById(R.id.moviesGrid);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, moviesNumber);

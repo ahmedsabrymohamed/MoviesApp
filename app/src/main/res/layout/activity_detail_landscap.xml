@@ -9,47 +9,46 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#000"
-        android:orientation="vertical"
+        android:orientation="horizontal"
         tools:context="com.example.mine.popularmovies.DetailActivity">
 
 
-
-
         <com.facebook.drawee.view.SimpleDraweeView
-                android:id="@+id/movieDraweeView"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="2"
-            android:elevation="2dp"
-                android:fadingEdge="vertical"
-                fresco:actualImageScaleType="fitXY"
-                fresco:backgroundImage="@drawable/shadow"
-                fresco:placeholderImage="@drawable/movie_poster" />
+            android:id="@+id/movieDraweeView"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:fadingEdge="vertical"
+            fresco:backgroundImage="@drawable/shadow"
+            fresco:placeholderImage="@drawable/movie_poster"
+            fresco:actualImageScaleType="fitXY"
+            android:padding="3dp"/>
 
 
 
-
-        <TextView
-            android:id="@+id/movieOriginalTitle"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="0.5"
-            android:padding="3dp"
-            android:text="movieOriginalTitle"
-            android:textColor="#fff"
-            android:textSize="25sp"
-            android:textStyle="bold" />
         <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
             android:layout_weight="2">
 
+            <TextView
+                android:id="@+id/movieOriginalTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="movieOriginalTitle"
+                android:layout_alignParentStart="true"
+                android:textColor="#fff"
+                android:textSize="25sp"
+                android:textStyle="bold" />
+
             <LinearLayout
+
                 android:id="@+id/movieOverviewLayout"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="16dp"
+                android:layout_below="@id/movieOriginalTitle">
 
                 <RatingBar
                     android:id="@+id/ratingBar"
@@ -57,11 +56,12 @@
                     android:layout_height="wrap_content"
                     android:scaleX="0.5"
                     android:scaleY="0.5"
+
                     />
 
                 <TextView
                     android:id="@+id/movieOverview"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:minLines="4"
                     android:text="movieOverview"

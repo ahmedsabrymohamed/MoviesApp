@@ -25,7 +25,7 @@ class Movie implements Parcelable{
     public Movie() {
     }
 
-    public Movie(Parcel in) {
+    private Movie(Parcel in) {
 
         video=in.readByte()!=0;
         id=in.readString();
@@ -41,6 +41,8 @@ class Movie implements Parcelable{
         voteCount=in.readInt();
 
     }
+
+
     @Override
     public int describeContents() {
         return 0;

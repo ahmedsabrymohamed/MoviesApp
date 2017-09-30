@@ -14,7 +14,8 @@
         fresco:roundingBorderColor="#000000"
         fresco:roundingBorderWidth="0.80dp"
         fresco:placeholderImage="@drawable/movie_poster"
-        fresco:placeholderImageScaleType="fitCenter"/>
+        fresco:placeholderImageScaleType="fitCenter"
+        />
 
     <TextView
         android:id="@+id/gridTitleTextView"

@@ -22,9 +22,9 @@ import java.util.ArrayList;
 
 public class GridAdapter extends RecyclerView.Adapter<GridAdapter.GridViewHolder> {
 
-    private ArrayList<Movie> movies;
+    private final ArrayList<Movie> movies;
     private final  SetOncLickListener mListener;
-    private final static String BaseURL="https://image.tmdb.org/t/p/w185";
+    private final static String BaseURL="https://image.tmdb.org/t/p/w500";
     private Integer lastPage;
 
     GridAdapter(SetOncLickListener Listener){
@@ -68,7 +68,7 @@ public class GridAdapter extends RecyclerView.Adapter<GridAdapter.GridViewHolder
         return movies.size();
     }
 
-    public void insertItem(Movie movie){
+    private void insertItem(Movie movie){
 
         movies.add(movie);
         notifyItemInserted(movies.size()-1);
@@ -105,10 +105,6 @@ public class GridAdapter extends RecyclerView.Adapter<GridAdapter.GridViewHolder
             mListener.SetOnclick(movies.get(getAdapterPosition()));
 
         }
-    }
-
-    public ArrayList<Movie> getMovies() {
-        return movies;
     }
 
     public void setMovies(ArrayList<Movie> movies) {
