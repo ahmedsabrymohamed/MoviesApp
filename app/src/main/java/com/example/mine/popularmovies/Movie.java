@@ -11,34 +11,43 @@ class Movie implements Parcelable{
 
     private boolean video;
     private String id;
-    private double voteAvg;
+    private double vote_average;
     private String title;
-    private String originalTitle;
-    private String originalLanguage;
-    private String posterPath;
-    private String backDropPath;
+    private String original_title;
+    private String original_language;
+    private String poster_path;
+    private String backdrop_path;
     private boolean adult;
     private String overview;
-    private String releaseDate;
-    private int voteCount;
+    private String release_date;
+    private int vote_count;
+
+
+
+
+
 
     public Movie() {
+
     }
 
     private Movie(Parcel in) {
 
         video=in.readByte()!=0;
         id=in.readString();
-        voteAvg=in.readDouble();
+        vote_average =in.readDouble();
         title=in.readString();
-        originalTitle=in.readString();
-        originalLanguage=in.readString();
-        posterPath=in.readString();
-        backDropPath=in.readString();
+        original_title =in.readString();
+        original_language =in.readString();
+        poster_path =in.readString();
+        backdrop_path =in.readString();
         adult=in.readByte()!=0;
         overview=in.readString();
-        releaseDate=in.readString();
-        voteCount=in.readInt();
+        release_date =in.readString();
+        vote_count =in.readInt();
+
+
+
 
     }
 
@@ -53,16 +62,16 @@ class Movie implements Parcelable{
 
         parcel.writeByte((video)?(byte)1:(byte)0);
         parcel.writeString(id);
-        parcel.writeDouble(voteAvg);
+        parcel.writeDouble(vote_average);
         parcel.writeString(title);
-        parcel.writeString(originalTitle);
-        parcel.writeString(originalLanguage);
-        parcel.writeString(posterPath);
-        parcel.writeString(backDropPath);
+        parcel.writeString(original_title);
+        parcel.writeString(original_language);
+        parcel.writeString(poster_path);
+        parcel.writeString(backdrop_path);
         parcel.writeByte((adult)?(byte)1:(byte)0);
         parcel.writeString(overview);
-        parcel.writeString(releaseDate);
-        parcel.writeInt(voteCount);
+        parcel.writeString(release_date);
+        parcel.writeInt(vote_count);
 
     }
 
@@ -78,12 +87,12 @@ class Movie implements Parcelable{
         }
     };
 
-    public String getOriginalLanguage() {
-        return originalLanguage;
+    public String getOriginal_language() {
+        return original_language;
     }
 
-    public void setOriginalLanguage(String originalLanguage) {
-        this.originalLanguage = originalLanguage;
+    public void setOriginal_language(String original_language) {
+        this.original_language = original_language;
     }
 
     public boolean isVideo() {
@@ -102,12 +111,12 @@ class Movie implements Parcelable{
         this.id = id;
     }
 
-    public double getVoteAvg() {
-        return voteAvg;
+    public double getVote_average() {
+        return vote_average;
     }
 
-    public void setVoteAvg(double vote_avg) {
-        this.voteAvg = vote_avg;
+    public void setVote_average(double vote_avg) {
+        this.vote_average = vote_avg;
     }
 
     public String getTitle() {
@@ -118,28 +127,28 @@ class Movie implements Parcelable{
         this.title = title;
     }
 
-    public String getOriginalTitle() {
-        return originalTitle;
+    public String getOriginal_title() {
+        return original_title;
     }
 
-    public void setOriginalTitle(String originalTitle) {
-        this.originalTitle = originalTitle;
+    public void setOriginal_title(String original_title) {
+        this.original_title = original_title;
     }
 
-    public String getPosterPath() {
-        return posterPath;
+    public String getPoster_path() {
+        return poster_path;
     }
 
-    public void setPosterPath(String posterPath) {
-        this.posterPath = posterPath;
+    public void setPoster_path(String poster_path) {
+        this.poster_path = poster_path;
     }
 
-    public String getBackDropPath() {
-        return backDropPath;
+    public String getBackdrop_path() {
+        return backdrop_path;
     }
 
-    public void setBackDropPath(String backDropPath) {
-        this.backDropPath = backDropPath;
+    public void setBackdrop_path(String backdrop_path) {
+        this.backdrop_path = backdrop_path;
     }
 
     public boolean isAdult() {
@@ -158,17 +167,17 @@ class Movie implements Parcelable{
         this.overview = overview;
     }
 
-    public String getReleaseDate() {
-        return releaseDate;
+    public String getRelease_date() {
+        return release_date;
     }
 
-    public void setReleaseDate(String releaseDate) {
-        this.releaseDate = releaseDate;
+    public void setRelease_date(String release_date) {
+        this.release_date = release_date;
     }
 
-    public int getVoteCount() {return voteCount;}
+    public int getVote_count() {return vote_count;}
 
-    public void setVoteCount(int voteCount) {this.voteCount = voteCount;}
+    public void setVote_count(int vote_count) {this.vote_count = vote_count;}
 
 
 }

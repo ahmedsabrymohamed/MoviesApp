@@ -2,6 +2,7 @@ package com.example.mine.popularmovies;
 
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * this class is the customAdapter and viewHolder used to handle the clicks and view recycling
@@ -22,7 +24,7 @@ import java.util.ArrayList;
 
 public class GridAdapter extends RecyclerView.Adapter<GridAdapter.GridViewHolder> {
 
-    private final ArrayList<Movie> movies;
+    private final List<Movie> movies;
     private final  SetOncLickListener mListener;
     private final static String BaseURL="https://image.tmdb.org/t/p/w500";
     private Integer lastPage;
@@ -48,7 +50,7 @@ public class GridAdapter extends RecyclerView.Adapter<GridAdapter.GridViewHolder
     public void onBindViewHolder(GridViewHolder holder, int position) {
 
 
-        Uri uri=Uri.parse(BaseURL+movies.get(position).getPosterPath());
+        Uri uri=Uri.parse(BaseURL+movies.get(position).getPoster_path());
 
         ImageRequest request = ImageRequestBuilder.newBuilderWithSource(uri)
                 .setResizeOptions(new ResizeOptions(500, 500))
@@ -59,7 +61,15 @@ public class GridAdapter extends RecyclerView.Adapter<GridAdapter.GridViewHolder
                         .setImageRequest(request)
                         .build());
         holder.title.setText(movies.get(position).getTitle());
-        holder.date.setText(movies.get(position).getReleaseDate().substring(0,4));
+        if(movies.get(position).getRelease_date().length()>5)
+            holder.date.setText(movies.get(position).getRelease_date().substring(0,4));
+        else
+        {
+            holder.date.setText("Unknown");
+            movies.get(position).setRelease_date("Unknown");
+
+        }
+//
 
     }
 
@@ -107,7 +117,7 @@ public class GridAdapter extends RecyclerView.Adapter<GridAdapter.GridViewHolder
         }
     }
 
-    public void setMovies(ArrayList<Movie> movies) {
+    public void setMovies(List<Movie> movies) {
         if(movies!=null)
             for(Movie x:movies)
                 insertItem(x);

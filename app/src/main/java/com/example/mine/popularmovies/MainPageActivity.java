@@ -7,18 +7,30 @@ import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import java.net.URL;
+import org.json.JSONException;
 
-public class MainPageActivity extends AppCompatActivity implements GridAdapter.SetOncLickListener {
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+public class MainPageActivity extends AppCompatActivity implements  GridAdapter.SetOncLickListener  {
+
 
     private final static String SETTINGS_SELECTED = "selectedCategory";
     private SharedPreferences settings;
     private RecyclerView moviesGrid;
     private GridAdapter gridAdapter;
     private Integer pageNumber=1;
+    private final static String SHOW_TYPE="movie";
     private static final String API_KEY = BuildConfig.APIKey;
 
 
@@ -89,29 +101,55 @@ public class MainPageActivity extends AppCompatActivity implements GridAdapter.S
         return true;
     }
 
-    private void refresh(Integer pageNumber) {
+    private void refresh(final Integer pageNumber) {
 
 
-
+        final String TAG=this.getClass().getSimpleName();
+        Log.d("ahmed", "Number of movies received: " + pageNumber);
         String moviesCategory = settings.getString(SETTINGS_SELECTED, "popular");
 
-        URL url = Network.buildURL(API_KEY, moviesCategory, pageNumber);
+        ApiInterface apiService =
+                APIClient.getClient().create(ApiInterface.class);
 
-        FetchMovies fetchMovies = new FetchMovies(gridAdapter);
+        Call<MoviesResponse> call = apiService.getMoviesData(SHOW_TYPE,moviesCategory,API_KEY,pageNumber.toString());
+        call.enqueue(new Callback<MoviesResponse>() {
+            @Override
+            public void onResponse(Call<MoviesResponse>call, Response<MoviesResponse> response) {
+                List<Movie> movies = response.body().getResults();
+                gridAdapter.setLastPage(response.body().getTotal_pages());
+                gridAdapter.setMovies(movies);
 
-        fetchMovies.execute(url);
+
+            }
+
+            @Override
+            public void onFailure(Call<MoviesResponse>call, Throwable t) {
+                // Log error here since request failed
+                Log.e(TAG, t.toString());
+            }
+        });
+
+
 
     }
 
     @Override
     public void SetOnclick(Movie movie) {
 
-        Intent intent =new Intent(this,DetailActivity.class);
+
+
+        final Intent intent =new Intent(this,DetailActivity.class);
+
+
+
         Bundle bundle =new Bundle();
         bundle.putParcelable("Movie",movie);
         intent.putExtras(bundle);
         startActivity(intent);
+
     }
+
+
 
 
 }
