@@ -1,23 +1,23 @@
 package com.example.mine.popularmovies;
 
+
 import android.content.Intent;
 import android.content.res.Configuration;
 
-;
+
 import android.net.Uri;
 
 import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-import android.support.v7.widget.GridLayoutManager;
+;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 
 import android.util.Log;
 import android.widget.LinearLayout;
-import android.widget.RatingBar;
 
 import android.widget.TextView;
 
@@ -27,6 +27,8 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.facebook.imagepipeline.common.ResizeOptions;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
+import com.like.LikeButton;
+import com.like.OnLikeListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +43,7 @@ public class DetailActivity extends AppCompatActivity implements ListAdapter.Set
     private Movie movie=null;
     private ListAdapter reviewsAdapter;
     private ListAdapter trailersAdapter;
-
+    private LikeButton likeButton;
     private final static String BaseURL="https://image.tmdb.org/t/p/w500";
     private   List<MovieImage> images ;
     private  SimpleDraweeView moviePoster;
@@ -60,6 +62,7 @@ public class DetailActivity extends AppCompatActivity implements ListAdapter.Set
         else
             setContentView(R.layout.activity_detail);
 
+        likeButton=(LikeButton)findViewById(R.id.fivoret_button);
 
         movie=new Movie();
         Intent intent=getIntent();
@@ -68,6 +71,8 @@ public class DetailActivity extends AppCompatActivity implements ListAdapter.Set
             if(bundle!=null){
 
                 movie=bundle.getParcelable("Movie");
+                Log.v("ahmed",Boolean.toString(movie.isFavorite()));
+                likeButton.setLiked(movie.isFavorite());
 
             }
         }
@@ -81,6 +86,33 @@ public class DetailActivity extends AppCompatActivity implements ListAdapter.Set
 
         moviePoster = (SimpleDraweeView) findViewById(R.id.movieDraweeView);
 
+
+        likeButton.setOnLikeListener(new OnLikeListener(){
+
+            @Override
+            public void liked(LikeButton likeButton) {
+
+                movie.setFavorite(true);
+                getContentResolver().insert(DatabaseContract.Movies.MOVIE_URI,DatabaseContract.makeMovieContentValues(movie));
+                Log.v("ahmed",Boolean.toString(movie.isFavorite()));
+
+                
+
+            }
+
+            @Override
+            public void unLiked(LikeButton likeButton) {
+
+                movie.setFavorite(false);
+                String[] args=new String [1];
+                args[0]=movie.getId();
+                getContentResolver().delete(DatabaseContract.Movies.MOVIE_URI
+                        ,DatabaseContract.Movies.ID+" =?",args);
+
+
+
+            }
+        });
         TextView movieRate = (TextView) findViewById(R.id.ratingBar);
         movieRate.setText(Double.toString(movie.getVote_average()));
 
@@ -295,6 +327,19 @@ public class DetailActivity extends AppCompatActivity implements ListAdapter.Set
             if (intent.resolveActivity(getPackageManager()) != null) {
                 startActivity(intent);
             }
+
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        likeButton.setLiked(savedInstanceState.getBoolean("like"));
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putBoolean("like",likeButton.isLiked());
+        super.onSaveInstanceState(outState);
 
     }
 }

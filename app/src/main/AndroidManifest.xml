@@ -3,6 +3,7 @@
     package="com.example.mine.popularmovies">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:name=".AppStart"
@@ -20,6 +21,11 @@
             </intent-filter>
         </activity>
         <activity android:name=".DetailActivity" />
+        <provider
+            android:authorities="com.example.mine.popularmovies"
+            android:name="com.example.mine.popularmovies.MovieProvider"
+            android:exported="false"
+            />
     </application>
 
 </manifest>

@@ -1,7 +1,14 @@
 package com.example.mine.popularmovies;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -11,10 +18,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import org.json.JSONException;
+import android.widget.Toast;
 
-import java.io.IOException;
-import java.net.URL;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +28,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainPageActivity extends AppCompatActivity implements  GridAdapter.SetOncLickListener  {
+public class MainPageActivity extends AppCompatActivity implements  GridAdapter.SetOncLickListener
+        ,LoaderManager.LoaderCallbacks<Cursor>  {
 
 
     private final static String SETTINGS_SELECTED = "selectedCategory";
@@ -32,6 +39,18 @@ public class MainPageActivity extends AppCompatActivity implements  GridAdapter.
     private Integer pageNumber=1;
     private final static String SHOW_TYPE="movie";
     private static final String API_KEY = BuildConfig.APIKey;
+    private static final int OFFLINE_LOADER=1001;
+    private Toast networkInfo;
+    private MenuItem topRated;
+    private MenuItem mostPopular;
+    private MenuItem upComing;
+    private MenuItem nowPlaying;
+    private MenuItem favorite;
+    private boolean topRatedVal=false;
+    private boolean mostPopularVal=false;
+    private boolean favoriteVal=false;
+    private boolean upComingVal=false;
+    private boolean nowPlayingVal=false;
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +66,9 @@ public class MainPageActivity extends AppCompatActivity implements  GridAdapter.
         moviesGrid.setLayoutManager(gridLayoutManager);
         moviesGrid.setHasFixedSize(true);
         moviesGrid.setAdapter(gridAdapter);
+        networkInfo=null;
+
+
         pageNumber=1;
         refresh(pageNumber);
         moviesGrid.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -56,12 +78,25 @@ public class MainPageActivity extends AppCompatActivity implements  GridAdapter.
                 if(!moviesGrid.canScrollVertically(1)){
                     if(pageNumber<=gridAdapter.getLastPage()) {
 
-                        pageNumber++;
-                        refresh(pageNumber);
+                        ConnectivityManager connectivityManager
+                                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+                        NetworkInfo networkInfo=connectivityManager.getActiveNetworkInfo();
+                        if(networkInfo!=null&&networkInfo.isConnected()){
+                            pageNumber++;
+                            refresh(pageNumber);
+
+                        }
+                        else{
+                           notifyUser();
+
+                        }
+
+
                     }
                 }
             }
         });
+
 
     }
 
@@ -69,6 +104,16 @@ public class MainPageActivity extends AppCompatActivity implements  GridAdapter.
     public boolean onCreateOptionsMenu(Menu menu) {
 
         getMenuInflater().inflate(R.menu.category_menu, menu);
+        mostPopular=menu.getItem(0);
+        topRated=menu.getItem(1);
+        upComing=menu.getItem(2);
+        nowPlaying=menu.getItem(3);
+        favorite=menu.getItem(4);
+        topRated.setChecked(topRatedVal);
+        mostPopular.setChecked(mostPopularVal);
+        favorite.setChecked(favoriteVal);
+        upComing.setChecked(upComingVal);
+        nowPlaying.setChecked(nowPlayingVal);
         return true;
     }
 
@@ -76,20 +121,49 @@ public class MainPageActivity extends AppCompatActivity implements  GridAdapter.
     public boolean onOptionsItemSelected(MenuItem item) {
 
         int id = item.getItemId();
+        item.setChecked(true);
         String movieCategory;
         switch (id){
 
             case R.id.top_rated:
                 movieCategory="top_rated";
+                topRated.setChecked(true);
+                mostPopular.setChecked(false);
+                favorite.setChecked(false);
+                upComing.setChecked(false);
+                nowPlaying.setChecked(false);
                 break;
             case R.id.now_playing:
                 movieCategory="now_playing";
+                topRated.setChecked(false);
+                mostPopular.setChecked(false);
+                favorite.setChecked(false);
+                upComing.setChecked(false);
+                nowPlaying.setChecked(true);
                 break;
             case R.id.upcoming:
                 movieCategory="upcoming";
+                topRated.setChecked(false);
+                mostPopular.setChecked(false);
+                favorite.setChecked(false);
+                upComing.setChecked(true);
+                nowPlaying.setChecked(false);
+                break;
+            case R.id.favorite:
+                movieCategory="favorite";
+                topRated.setChecked(false);
+                mostPopular.setChecked(false);
+                favorite.setChecked(true);
+                upComing.setChecked(false);
+                nowPlaying.setChecked(false);
                 break;
             default:
                 movieCategory="popular";
+                topRated.setChecked(false);
+                mostPopular.setChecked(true);
+                favorite.setChecked(false);
+                upComing.setChecked(false);
+                nowPlaying.setChecked(false);
         }
 
         settings.edit().putString(SETTINGS_SELECTED, movieCategory).apply();
@@ -101,13 +175,16 @@ public class MainPageActivity extends AppCompatActivity implements  GridAdapter.
         return true;
     }
 
-    private void refresh(final Integer pageNumber) {
+    private void refresh(final Integer pageNumber){
 
 
         final String TAG=this.getClass().getSimpleName();
-        Log.d("ahmed", "Number of movies received: " + pageNumber);
         String moviesCategory = settings.getString(SETTINGS_SELECTED, "popular");
 
+        if(moviesCategory.equals("favorite")){
+            getSupportLoaderManager().restartLoader(OFFLINE_LOADER, null, this);
+            return;
+        }
         ApiInterface apiService =
                 APIClient.getClient().create(ApiInterface.class);
 
@@ -151,5 +228,101 @@ public class MainPageActivity extends AppCompatActivity implements  GridAdapter.
 
 
 
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, final Bundle args) {
+        return new AsyncTaskLoader<Cursor>(this) {
+
+            @Override
+            protected void onStartLoading() {
+                super.onStartLoading();
+
+                forceLoad();
+            }
+
+            @Override
+            public Cursor loadInBackground() {
+
+
+                try {
+
+                    Cursor cursor= getContentResolver().query(DatabaseContract.Movies.ALL_MOVIES_URI
+                            , null
+                            , null
+                            , null
+                            , null
+                            , null);
+                    return cursor;
+                }
+                catch (Exception e){
+                    return  null;
+                }
+            }
+        };
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+
+        List<Movie>movies=new ArrayList<>();
+        data.moveToFirst();
+        while(!data.isAfterLast()){
+            Movie movie=new Movie();
+            movie.setId(data.getString(data.getColumnIndex(DatabaseContract.Movies.ID)));
+            movie.setAdult(data.getInt(data.getColumnIndex(DatabaseContract.Movies.ADULT))==1);
+            movie.setRelease_date(data.getString(data.getColumnIndex(DatabaseContract.Movies.RELEASE_DATE)));
+            movie.setOverview(data.getString(data.getColumnIndex(DatabaseContract.Movies.OVERVIEW)));
+            movie.setBackdrop_path(data.getString(data.getColumnIndex(DatabaseContract.Movies.BACKDROP_PATH)));
+            movie.setPoster_path(data.getString(data.getColumnIndex(DatabaseContract.Movies.POSTER_PATH)));
+            movie.setTitle(data.getString(data.getColumnIndex(DatabaseContract.Movies.TITLE)));
+            movie.setOriginal_title(data.getString(data.getColumnIndex(DatabaseContract.Movies.ORIGINAL_TITLE)));
+            movie.setOriginal_language(data.getString(data.getColumnIndex(DatabaseContract.Movies.ORIGINAL_LANGUAGE)));
+            movie.setVideo(data.getInt(data.getColumnIndex(DatabaseContract.Movies.VIDEO))==1);
+            movie.setVote_average(data.getDouble(data.getColumnIndex(DatabaseContract.Movies.VOTE_AVERAGE)));
+            movie.setVote_count(data.getInt(data.getColumnIndex(DatabaseContract.Movies.VOTE_COUNT)));
+            movie.setFavorite(data.getInt(data.getColumnIndex(DatabaseContract.Movies.FAVORITE))==1);
+            movies.add(movie);
+            data.moveToNext();
+
+        }
+        gridAdapter.refresh();
+        gridAdapter.setLastPage(data.getCount()/19);
+        gridAdapter.setMovies(movies);
+
+
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
+    }
+    private void notifyUser(){
+        if(networkInfo!=null)
+            networkInfo.cancel();
+        networkInfo=Toast.makeText(getApplication(),"There is No INTERNET Connection",Toast.LENGTH_LONG);
+        networkInfo.show();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putBoolean("topRated",topRated.isChecked());
+        outState.putBoolean("mostPopular", mostPopular.isChecked());
+        outState.putBoolean("favorite",favorite.isChecked());
+        outState.putBoolean("upComing",upComing.isChecked());
+        outState.putBoolean("nowPlaying",nowPlaying.isChecked());
+
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        topRatedVal=savedInstanceState.getBoolean("topRated");
+        mostPopularVal=savedInstanceState.getBoolean("mostPopular");
+        favoriteVal=savedInstanceState.getBoolean("favorite");
+        upComingVal=savedInstanceState.getBoolean("upComing");
+        nowPlayingVal=savedInstanceState.getBoolean("nowPlaying");
+
+        super.onRestoreInstanceState(savedInstanceState);
+    }
 
 }

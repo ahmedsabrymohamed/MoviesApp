@@ -31,7 +31,6 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
     public void setReviews(List<Review> reviews){
         this.reviews=reviews;
-//        Log.v("ahmed", "onResponsess: "+reviews.get(0).getAuthor());
         this.notifyDataSetChanged();
     }
     public void setTrailerItemOncLickListener(SetOncLickListener Listener){

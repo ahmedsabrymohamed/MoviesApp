@@ -21,11 +21,16 @@ class Movie implements Parcelable{
     private String overview;
     private String release_date;
     private int vote_count;
+    private boolean favorite;
 
 
+    public boolean isFavorite() {
+        return favorite;
+    }
 
-
-
+    public void setFavorite(boolean favorite) {
+        this.favorite = favorite;
+    }
 
     public Movie() {
 
@@ -45,6 +50,7 @@ class Movie implements Parcelable{
         overview=in.readString();
         release_date =in.readString();
         vote_count =in.readInt();
+        favorite=in.readByte()!=0;
 
 
 
@@ -72,6 +78,7 @@ class Movie implements Parcelable{
         parcel.writeString(overview);
         parcel.writeString(release_date);
         parcel.writeInt(vote_count);
+        parcel.writeByte((favorite)?(byte)1:(byte)0);
 
     }
 
