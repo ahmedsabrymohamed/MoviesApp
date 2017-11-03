@@ -55,11 +55,13 @@ public class MainPageActivity extends AppCompatActivity implements  GridAdapter.
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
         float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
         int moviesNumber=((int)dpWidth/101);
         setContentView(R.layout.activity_main_page);
         settings = getSharedPreferences(getString(R.string.settingData), MODE_PRIVATE);
+
         gridAdapter = new GridAdapter(this);
         moviesGrid = (RecyclerView) findViewById(R.id.moviesGrid);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, moviesNumber);
@@ -70,6 +72,7 @@ public class MainPageActivity extends AppCompatActivity implements  GridAdapter.
 
 
         pageNumber=1;
+        gridAdapter.refresh();
         refresh(pageNumber);
         moviesGrid.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -103,6 +106,7 @@ public class MainPageActivity extends AppCompatActivity implements  GridAdapter.
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
+
         getMenuInflater().inflate(R.menu.category_menu, menu);
         mostPopular=menu.getItem(0);
         topRated=menu.getItem(1);
@@ -115,6 +119,12 @@ public class MainPageActivity extends AppCompatActivity implements  GridAdapter.
         upComing.setChecked(upComingVal);
         nowPlaying.setChecked(nowPlayingVal);
         return true;
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
     }
 
     @Override
@@ -168,6 +178,7 @@ public class MainPageActivity extends AppCompatActivity implements  GridAdapter.
 
         settings.edit().putString(SETTINGS_SELECTED, movieCategory).apply();
 
+
         gridAdapter.refresh();
         refresh(1);
 
@@ -178,33 +189,40 @@ public class MainPageActivity extends AppCompatActivity implements  GridAdapter.
     private void refresh(final Integer pageNumber){
 
 
+
         final String TAG=this.getClass().getSimpleName();
         String moviesCategory = settings.getString(SETTINGS_SELECTED, "popular");
 
         if(moviesCategory.equals("favorite")){
+
+
             getSupportLoaderManager().restartLoader(OFFLINE_LOADER, null, this);
-            return;
+
+
         }
-        ApiInterface apiService =
-                APIClient.getClient().create(ApiInterface.class);
+        else {
+            ApiInterface apiService =
+                    APIClient.getClient().create(ApiInterface.class);
 
-        Call<MoviesResponse> call = apiService.getMoviesData(SHOW_TYPE,moviesCategory,API_KEY,pageNumber.toString());
-        call.enqueue(new Callback<MoviesResponse>() {
-            @Override
-            public void onResponse(Call<MoviesResponse>call, Response<MoviesResponse> response) {
-                List<Movie> movies = response.body().getResults();
-                gridAdapter.setLastPage(response.body().getTotal_pages());
-                gridAdapter.setMovies(movies);
+            Call<MoviesResponse> call = apiService.getMoviesData(SHOW_TYPE, moviesCategory, API_KEY, pageNumber.toString());
+            call.enqueue(new Callback<MoviesResponse>() {
+                @Override
+                public void onResponse(Call<MoviesResponse> call, Response<MoviesResponse> response) {
+                    List<Movie> movies = response.body().getResults();
+
+                    gridAdapter.setLastPage(response.body().getTotal_pages());
+                    gridAdapter.setMovies(movies);
 
 
-            }
+                }
 
-            @Override
-            public void onFailure(Call<MoviesResponse>call, Throwable t) {
-                // Log error here since request failed
-                Log.e(TAG, t.toString());
-            }
-        });
+                @Override
+                public void onFailure(Call<MoviesResponse> call, Throwable t) {
+                    // Log error here since request failed
+                    Log.e(TAG, t.toString());
+                }
+            });
+        }
 
 
 
@@ -215,6 +233,7 @@ public class MainPageActivity extends AppCompatActivity implements  GridAdapter.
 
 
 
+        movie.setFavorite(new DatabaseHelper(this).findMovie(movie.getId()));
         final Intent intent =new Intent(this,DetailActivity.class);
 
 
@@ -232,6 +251,10 @@ public class MainPageActivity extends AppCompatActivity implements  GridAdapter.
     @Override
     public Loader<Cursor> onCreateLoader(int id, final Bundle args) {
         return new AsyncTaskLoader<Cursor>(this) {
+            @Override
+            protected void onStopLoading() {
+                cancelLoad();
+            }
 
             @Override
             protected void onStartLoading() {
@@ -243,51 +266,61 @@ public class MainPageActivity extends AppCompatActivity implements  GridAdapter.
             @Override
             public Cursor loadInBackground() {
 
+                String moviesCategory = settings.getString(SETTINGS_SELECTED, "popular");
 
-                try {
+                if (moviesCategory.equals("favorite")) {
 
-                    Cursor cursor= getContentResolver().query(DatabaseContract.Movies.ALL_MOVIES_URI
-                            , null
-                            , null
-                            , null
-                            , null
-                            , null);
-                    return cursor;
+                    try {
+
+                        Cursor cursor = getContentResolver().query(DatabaseContract.Movies.ALL_MOVIES_URI
+                                , null
+                                , null
+                                , null
+                                , null
+                                , null);
+                        return cursor;
+                    } catch (Exception e) {
+                        return null;
+                    }
                 }
-                catch (Exception e){
-                    return  null;
-                }
+                return null;
             }
+
         };
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
 
-        List<Movie>movies=new ArrayList<>();
-        data.moveToFirst();
-        while(!data.isAfterLast()){
-            Movie movie=new Movie();
-            movie.setId(data.getString(data.getColumnIndex(DatabaseContract.Movies.ID)));
-            movie.setAdult(data.getInt(data.getColumnIndex(DatabaseContract.Movies.ADULT))==1);
-            movie.setRelease_date(data.getString(data.getColumnIndex(DatabaseContract.Movies.RELEASE_DATE)));
-            movie.setOverview(data.getString(data.getColumnIndex(DatabaseContract.Movies.OVERVIEW)));
-            movie.setBackdrop_path(data.getString(data.getColumnIndex(DatabaseContract.Movies.BACKDROP_PATH)));
-            movie.setPoster_path(data.getString(data.getColumnIndex(DatabaseContract.Movies.POSTER_PATH)));
-            movie.setTitle(data.getString(data.getColumnIndex(DatabaseContract.Movies.TITLE)));
-            movie.setOriginal_title(data.getString(data.getColumnIndex(DatabaseContract.Movies.ORIGINAL_TITLE)));
-            movie.setOriginal_language(data.getString(data.getColumnIndex(DatabaseContract.Movies.ORIGINAL_LANGUAGE)));
-            movie.setVideo(data.getInt(data.getColumnIndex(DatabaseContract.Movies.VIDEO))==1);
-            movie.setVote_average(data.getDouble(data.getColumnIndex(DatabaseContract.Movies.VOTE_AVERAGE)));
-            movie.setVote_count(data.getInt(data.getColumnIndex(DatabaseContract.Movies.VOTE_COUNT)));
-            movie.setFavorite(data.getInt(data.getColumnIndex(DatabaseContract.Movies.FAVORITE))==1);
-            movies.add(movie);
-            data.moveToNext();
+        if(data!=null) {
+            List<Movie> movies = new ArrayList<>();
+            data.moveToFirst();
+            while (!data.isAfterLast()) {
+                Movie movie = new Movie();
+                movie.setId(data.getString(data.getColumnIndex(DatabaseContract.Movies.ID)));
+                movie.setAdult(data.getInt(data.getColumnIndex(DatabaseContract.Movies.ADULT)) == 1);
+                movie.setRelease_date(data.getString(data.getColumnIndex(DatabaseContract.Movies.RELEASE_DATE)));
+                movie.setOverview(data.getString(data.getColumnIndex(DatabaseContract.Movies.OVERVIEW)));
+                movie.setBackdrop_path(data.getString(data.getColumnIndex(DatabaseContract.Movies.BACKDROP_PATH)));
+                movie.setPoster_path(data.getString(data.getColumnIndex(DatabaseContract.Movies.POSTER_PATH)));
+                movie.setTitle(data.getString(data.getColumnIndex(DatabaseContract.Movies.TITLE)));
+                movie.setOriginal_title(data.getString(data.getColumnIndex(DatabaseContract.Movies.ORIGINAL_TITLE)));
+                movie.setOriginal_language(data.getString(data.getColumnIndex(DatabaseContract.Movies.ORIGINAL_LANGUAGE)));
+                movie.setVideo(data.getInt(data.getColumnIndex(DatabaseContract.Movies.VIDEO)) == 1);
+                movie.setVote_average(data.getDouble(data.getColumnIndex(DatabaseContract.Movies.VOTE_AVERAGE)));
+                movie.setVote_count(data.getInt(data.getColumnIndex(DatabaseContract.Movies.VOTE_COUNT)));
+                movie.setFavorite(data.getInt(data.getColumnIndex(DatabaseContract.Movies.FAVORITE)) == 1);
+                movies.add(movie);
+                data.moveToNext();
 
+            }
+
+
+            gridAdapter.refresh();
+            gridAdapter.setLastPage(data.getCount() / 19);
+            gridAdapter.setMovies(movies);
         }
-        gridAdapter.refresh();
-        gridAdapter.setLastPage(data.getCount()/19);
-        gridAdapter.setMovies(movies);
+
 
 
     }
@@ -296,12 +329,14 @@ public class MainPageActivity extends AppCompatActivity implements  GridAdapter.
     public void onLoaderReset(Loader<Cursor> loader) {
 
     }
+
     private void notifyUser(){
         if(networkInfo!=null)
             networkInfo.cancel();
         networkInfo=Toast.makeText(getApplication(),"There is No INTERNET Connection",Toast.LENGTH_LONG);
         networkInfo.show();
     }
+
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {

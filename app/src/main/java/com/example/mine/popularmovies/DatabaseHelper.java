@@ -1,6 +1,7 @@
 package com.example.mine.popularmovies;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -12,7 +13,7 @@ import android.util.Log;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME="TMDB.db";
-    public static final int DATABASE_VERSION=2;
+    public static final int DATABASE_VERSION=3;
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -46,10 +47,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
 
-        Log.v("ahmed","ahmed sabry");
+
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS "+DatabaseContract.Movies.TABLE_NAME);
 
         onCreate(sqLiteDatabase);
+
+    }
+    public  boolean findMovie(String movieId){
+
+        String findMovie="Select * From "+DatabaseContract.Movies.TABLE_NAME+" where "+DatabaseContract.Movies.ID+" = "+movieId+" ;";
+        SQLiteDatabase db=getReadableDatabase();
+        Cursor cursor=db.rawQuery(findMovie,null);
+        return (cursor.getCount()>0);
 
     }
 

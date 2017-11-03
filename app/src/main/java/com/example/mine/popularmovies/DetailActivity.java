@@ -1,10 +1,13 @@
 package com.example.mine.popularmovies;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 
 
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 
 import android.os.CountDownTimer;
@@ -77,8 +80,7 @@ public class DetailActivity extends AppCompatActivity implements ListAdapter.Set
             }
         }
 
-        images= new ArrayList<>();
-        fetchImages(images);
+
 
         DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
         float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
@@ -94,9 +96,7 @@ public class DetailActivity extends AppCompatActivity implements ListAdapter.Set
 
                 movie.setFavorite(true);
                 getContentResolver().insert(DatabaseContract.Movies.MOVIE_URI,DatabaseContract.makeMovieContentValues(movie));
-                Log.v("ahmed",Boolean.toString(movie.isFavorite()));
 
-                
 
             }
 
@@ -174,8 +174,15 @@ public class DetailActivity extends AppCompatActivity implements ListAdapter.Set
         trailersList.setAdapter(trailersAdapter);
         reviewsList.setAdapter(reviewsAdapter);
 
-        fetchReviews();
-        fetchTrailers();
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo=connectivityManager.getActiveNetworkInfo();
+        if(networkInfo!=null&&networkInfo.isConnected()) {
+            fetchReviews();
+            fetchTrailers();
+            images= new ArrayList<>();
+            fetchImages(images);
+        }
 
 
 
