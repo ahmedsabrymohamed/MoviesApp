@@ -19,11 +19,11 @@ public class MovieProvider extends ContentProvider {
 
 
     private DatabaseHelper dbHelper;
-    public static final int ALL_MOVIES=100;
-    public static final int MOVIE=101;
+    private static final int ALL_MOVIES=100;
+    private static final int MOVIE=101;
 
     private static final UriMatcher mUriMATCHER=buildUriMatcher();
-    public static UriMatcher buildUriMatcher(){
+    private static UriMatcher buildUriMatcher(){
 
         UriMatcher uriMatcher=new UriMatcher(UriMatcher.NO_MATCH);
         uriMatcher.addURI(DatabaseContract.AUTHORITY,DatabaseContract.ALL_MOVIES_PATH,ALL_MOVIES);
@@ -43,7 +43,8 @@ public class MovieProvider extends ContentProvider {
 
     @Nullable
     @Override
-    public Cursor query(@NonNull Uri uri, @Nullable String[] strings, @Nullable String s, @Nullable String[] strings1, @Nullable String s1) {
+    public Cursor query(@NonNull Uri uri, @Nullable String[] strings, @Nullable String s
+            , @Nullable String[] strings1, @Nullable String s1) {
 
 
         SQLiteDatabase db=dbHelper.getWritableDatabase();
@@ -110,7 +111,8 @@ public class MovieProvider extends ContentProvider {
     }
 
     @Override
-    public int update(@NonNull Uri uri, @Nullable ContentValues contentValues, @Nullable String s, @Nullable String[] strings) {
+    public int update(@NonNull Uri uri, @Nullable ContentValues contentValues, @Nullable String s
+            , @Nullable String[] strings) {
         return 0;
     }
 

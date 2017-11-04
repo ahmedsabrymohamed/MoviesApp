@@ -1,13 +1,13 @@
 package com.example.mine.popularmovies;
 
-import java.util.List;
+
 
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
-public interface ApiInterface {
+interface ApiInterface {
     @GET("{SHOW_TYPE}/{Category}")
     Call<MoviesResponse>getMoviesData(@Path("SHOW_TYPE")String showType, @Path("Category")String category
             , @Query("api_key") String apiKey,@Query("page") String pageNumber);

@@ -55,31 +55,20 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
+                    <TextView
+
+                        android:id="@+id/ratingBar"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-
-                            fresco:srcCompat="@android:drawable/btn_star_big_on" />
-
-                        <TextView
-
-                            android:id="@+id/ratingBar"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:padding="3dp"
-                            android:textColor="#fff"
-                            android:textSize="15sp"
-                            android:textStyle="bold" />
-                    </LinearLayout>
+                        android:gravity="center"
+                        android:padding="3dp"
+                        android:textColor="#fff"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:drawableStart="@android:drawable/btn_star_big_on"/>
 
                     <com.like.LikeButton
-                        android:id="@+id/fivoret_button"
+                        android:id="@+id/favorite_button"
                         app:anim_scale_factor="2"
                         app:icon_size="30dp"
                         app:icon_type="heart"

@@ -4,10 +4,10 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
- * Created by mine on 22/10/17.
+ *  initialize Retrofit Library
  */
 
-public class APIClient {
+class APIClient {
 
     private final static String BASE_URL="https://api.themoviedb.org/3/";
     private static Retrofit retrofit=null;

@@ -3,10 +3,10 @@ package com.example.mine.popularmovies;
 import java.util.List;
 
 /**
- * Created by mine on 01/11/17.
+ * This class is used to get the Response of the Reviews of  specific movie
  */
 
-public class ReviewsResponse {
+class ReviewsResponse {
    private List<Review> results;
 
     public List<Review> getResults() {

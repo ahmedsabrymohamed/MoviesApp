@@ -1,13 +1,12 @@
 package com.example.mine.popularmovies;
 
-import android.os.Parcel;
-import android.os.Parcelable;
+
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by mine on 30/10/17.
+ * This class is used to get the Response of the Images of  specific movie
  */
 
 public class ImagesResponse {

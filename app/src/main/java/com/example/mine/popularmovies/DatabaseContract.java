@@ -8,7 +8,7 @@ import android.provider.BaseColumns;
  * The Contract of the SQLite Database
  */
 
-public class DatabaseContract {
+class DatabaseContract {
 
 
     public static final String AUTHORITY = "com.example.mine.popularmovies";

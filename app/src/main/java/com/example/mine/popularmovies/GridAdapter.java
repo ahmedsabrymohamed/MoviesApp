@@ -2,7 +2,6 @@ package com.example.mine.popularmovies;
 
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -91,7 +90,8 @@ public class GridAdapter extends RecyclerView.Adapter<GridAdapter.GridViewHolder
 
     }
 
-    public class GridViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class GridViewHolder extends RecyclerView.ViewHolder
+            implements View.OnClickListener{
 
         final SimpleDraweeView movieImage;
         final TextView title ;
@@ -133,5 +133,8 @@ public class GridAdapter extends RecyclerView.Adapter<GridAdapter.GridViewHolder
 
     public interface SetOncLickListener{
         void SetOnclick(Movie movie);
+    }
+    public ArrayList getMovies(){
+        return (ArrayList)movies;
     }
 }

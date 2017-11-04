@@ -4,7 +4,7 @@ package com.example.mine.popularmovies;
  * This class for Review Data the Author name and the content
  */
 
-public class Review {
+class Review {
 
     private String author,content;
 

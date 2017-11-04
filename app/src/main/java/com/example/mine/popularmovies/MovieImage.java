@@ -1,13 +1,11 @@
 package com.example.mine.popularmovies;
 
-import android.os.Parcel;
-import android.os.Parcelable;
 
 /**
  * This class for the Image Data
  */
 
-public class MovieImage  {
+class MovieImage  {
 
     private double aspect_ratio;
     private String file_path;

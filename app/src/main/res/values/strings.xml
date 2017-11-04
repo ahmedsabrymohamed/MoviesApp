@@ -11,5 +11,6 @@
     <string name="adult">Adult Movie</string>
     <string name="release_date">Release Date: </string>
     <string name="vote_count">Vote Count: </string>
+    <string name="MoviePoster">Movie Poster</string>
 
 </resources>

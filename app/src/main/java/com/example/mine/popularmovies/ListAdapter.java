@@ -1,13 +1,11 @@
 package com.example.mine.popularmovies;
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.facebook.drawee.gestures.GestureDetector;
 
 import java.util.List;
 
@@ -15,10 +13,10 @@ import java.util.List;
  *
  */
 
-public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
 
-    private String itemType;
+    private final String itemType;
     private List<Trailer> trailers;
     private List<Review> reviews;
     private SetOncLickListener mListener;
@@ -80,12 +78,12 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         }
         return 0;
-    };
+    }
 
     class ReviewsListViewHolder extends RecyclerView.ViewHolder{
 
-        TextView authorName;
-        TextView content;
+        final TextView authorName;
+        final TextView content;
         public ReviewsListViewHolder(View itemView) {
 
             super(itemView);
@@ -95,9 +93,10 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         }
     }
-    class TrailersListViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    class TrailersListViewHolder extends RecyclerView.ViewHolder
+            implements View.OnClickListener{
 
-        TextView trailerName;
+        final TextView trailerName;
         public TrailersListViewHolder(View itemView) {
 
             super(itemView);

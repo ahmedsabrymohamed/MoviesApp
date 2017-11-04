@@ -1,11 +1,13 @@
 package com.example.mine.popularmovies;
 
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
@@ -53,6 +55,7 @@ public class MainPageActivity extends AppCompatActivity implements  GridAdapter.
     private boolean nowPlayingVal=false;
 
 
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -64,16 +67,30 @@ public class MainPageActivity extends AppCompatActivity implements  GridAdapter.
 
         gridAdapter = new GridAdapter(this);
         moviesGrid = (RecyclerView) findViewById(R.id.moviesGrid);
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, moviesNumber);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this,moviesNumber);
         moviesGrid.setLayoutManager(gridLayoutManager);
         moviesGrid.setHasFixedSize(true);
         moviesGrid.setAdapter(gridAdapter);
         networkInfo=null;
 
-
         pageNumber=1;
-        gridAdapter.refresh();
-        refresh(pageNumber);
+        List<Movie> moviesData ;
+        if(savedInstanceState!=null) {
+            moviesData = savedInstanceState.getParcelableArrayList("moviesData");
+
+        }
+        else{
+            moviesData=null;
+        }
+        if (moviesData == null) {
+            refresh(pageNumber);
+            Log.v("ahmed", "worked");
+        } else {
+            gridAdapter.setMovies(moviesData);
+        }
+
+
+
         moviesGrid.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -121,11 +138,7 @@ public class MainPageActivity extends AppCompatActivity implements  GridAdapter.
         return true;
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
 
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -193,6 +206,7 @@ public class MainPageActivity extends AppCompatActivity implements  GridAdapter.
         final String TAG=this.getClass().getSimpleName();
         String moviesCategory = settings.getString(SETTINGS_SELECTED, "popular");
 
+
         if(moviesCategory.equals("favorite")){
 
 
@@ -207,17 +221,18 @@ public class MainPageActivity extends AppCompatActivity implements  GridAdapter.
             Call<MoviesResponse> call = apiService.getMoviesData(SHOW_TYPE, moviesCategory, API_KEY, pageNumber.toString());
             call.enqueue(new Callback<MoviesResponse>() {
                 @Override
-                public void onResponse(Call<MoviesResponse> call, Response<MoviesResponse> response) {
+                public void onResponse(@NonNull Call<MoviesResponse> call, @NonNull Response<MoviesResponse> response) {
                     List<Movie> movies = response.body().getResults();
 
                     gridAdapter.setLastPage(response.body().getTotal_pages());
                     gridAdapter.setMovies(movies);
 
 
+
                 }
 
                 @Override
-                public void onFailure(Call<MoviesResponse> call, Throwable t) {
+                public void onFailure(@NonNull Call<MoviesResponse> call, @NonNull Throwable t) {
                     // Log error here since request failed
                     Log.e(TAG, t.toString());
                 }
@@ -272,13 +287,12 @@ public class MainPageActivity extends AppCompatActivity implements  GridAdapter.
 
                     try {
 
-                        Cursor cursor = getContentResolver().query(DatabaseContract.Movies.ALL_MOVIES_URI
+                        return getContentResolver().query(DatabaseContract.Movies.ALL_MOVIES_URI
                                 , null
                                 , null
                                 , null
                                 , null
                                 , null);
-                        return cursor;
                     } catch (Exception e) {
                         return null;
                     }
@@ -297,20 +311,35 @@ public class MainPageActivity extends AppCompatActivity implements  GridAdapter.
             data.moveToFirst();
             while (!data.isAfterLast()) {
                 Movie movie = new Movie();
+
                 movie.setId(data.getString(data.getColumnIndex(DatabaseContract.Movies.ID)));
+
                 movie.setAdult(data.getInt(data.getColumnIndex(DatabaseContract.Movies.ADULT)) == 1);
+
                 movie.setRelease_date(data.getString(data.getColumnIndex(DatabaseContract.Movies.RELEASE_DATE)));
+
                 movie.setOverview(data.getString(data.getColumnIndex(DatabaseContract.Movies.OVERVIEW)));
+
                 movie.setBackdrop_path(data.getString(data.getColumnIndex(DatabaseContract.Movies.BACKDROP_PATH)));
+
                 movie.setPoster_path(data.getString(data.getColumnIndex(DatabaseContract.Movies.POSTER_PATH)));
+
                 movie.setTitle(data.getString(data.getColumnIndex(DatabaseContract.Movies.TITLE)));
+
                 movie.setOriginal_title(data.getString(data.getColumnIndex(DatabaseContract.Movies.ORIGINAL_TITLE)));
+
                 movie.setOriginal_language(data.getString(data.getColumnIndex(DatabaseContract.Movies.ORIGINAL_LANGUAGE)));
+
                 movie.setVideo(data.getInt(data.getColumnIndex(DatabaseContract.Movies.VIDEO)) == 1);
+
                 movie.setVote_average(data.getDouble(data.getColumnIndex(DatabaseContract.Movies.VOTE_AVERAGE)));
+
                 movie.setVote_count(data.getInt(data.getColumnIndex(DatabaseContract.Movies.VOTE_COUNT)));
+
                 movie.setFavorite(data.getInt(data.getColumnIndex(DatabaseContract.Movies.FAVORITE)) == 1);
+
                 movies.add(movie);
+
                 data.moveToNext();
 
             }
@@ -345,8 +374,10 @@ public class MainPageActivity extends AppCompatActivity implements  GridAdapter.
         outState.putBoolean("favorite",favorite.isChecked());
         outState.putBoolean("upComing",upComing.isChecked());
         outState.putBoolean("nowPlaying",nowPlaying.isChecked());
-
+        outState.putParcelableArrayList("moviesData", gridAdapter.getMovies());
         super.onSaveInstanceState(outState);
+
+
     }
 
     @Override
@@ -356,7 +387,6 @@ public class MainPageActivity extends AppCompatActivity implements  GridAdapter.
         favoriteVal=savedInstanceState.getBoolean("favorite");
         upComingVal=savedInstanceState.getBoolean("upComing");
         nowPlayingVal=savedInstanceState.getBoolean("nowPlaying");
-
         super.onRestoreInstanceState(savedInstanceState);
     }
 

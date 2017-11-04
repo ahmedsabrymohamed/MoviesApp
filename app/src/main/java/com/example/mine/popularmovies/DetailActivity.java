@@ -11,10 +11,11 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 
 import android.os.CountDownTimer;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-;
+
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
@@ -23,6 +24,7 @@ import android.util.Log;
 import android.widget.LinearLayout;
 
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.facebook.drawee.backends.pipeline.Fresco;
@@ -53,6 +55,7 @@ public class DetailActivity extends AppCompatActivity implements ListAdapter.Set
     private final static String SHOW_TYPE="movie";
     private static final String API_KEY = BuildConfig.APIKey;
     private final  Random rand = new Random();
+    private Toast favoriteToast;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +68,7 @@ public class DetailActivity extends AppCompatActivity implements ListAdapter.Set
         else
             setContentView(R.layout.activity_detail);
 
-        likeButton=(LikeButton)findViewById(R.id.fivoret_button);
+        likeButton=(LikeButton)findViewById(R.id.favorite_button);
 
         movie=new Movie();
         Intent intent=getIntent();
@@ -74,7 +77,6 @@ public class DetailActivity extends AppCompatActivity implements ListAdapter.Set
             if(bundle!=null){
 
                 movie=bundle.getParcelable("Movie");
-                Log.v("ahmed",Boolean.toString(movie.isFavorite()));
                 likeButton.setLiked(movie.isFavorite());
 
             }
@@ -95,8 +97,12 @@ public class DetailActivity extends AppCompatActivity implements ListAdapter.Set
             public void liked(LikeButton likeButton) {
 
                 movie.setFavorite(true);
-                getContentResolver().insert(DatabaseContract.Movies.MOVIE_URI,DatabaseContract.makeMovieContentValues(movie));
-
+                getContentResolver().insert(DatabaseContract.Movies.MOVIE_URI
+                        ,DatabaseContract.makeMovieContentValues(movie));
+                if(favoriteToast!=null)
+                    favoriteToast.cancel();
+                favoriteToast=Toast.makeText(getApplicationContext(),"Movie is marked as favorite :)",Toast.LENGTH_LONG);
+                favoriteToast.show();
 
             }
 
@@ -108,6 +114,10 @@ public class DetailActivity extends AppCompatActivity implements ListAdapter.Set
                 args[0]=movie.getId();
                 getContentResolver().delete(DatabaseContract.Movies.MOVIE_URI
                         ,DatabaseContract.Movies.ID+" =?",args);
+                if(favoriteToast!=null)
+                    favoriteToast.cancel();
+                favoriteToast=Toast.makeText(getApplicationContext(),"Movie is removed from favorite movies :(",Toast.LENGTH_LONG);
+                favoriteToast.show();
 
 
 
@@ -204,7 +214,7 @@ public class DetailActivity extends AppCompatActivity implements ListAdapter.Set
                         ,"en,null");
         call.enqueue(new Callback<ImagesResponse>() {
             @Override
-            public void onResponse(Call<ImagesResponse>call, Response<ImagesResponse> response) {
+            public void onResponse(@NonNull Call<ImagesResponse>call, @NonNull Response<ImagesResponse> response) {
 
 
                 images.addAll(response.body().getBackdrops());
@@ -216,7 +226,7 @@ public class DetailActivity extends AppCompatActivity implements ListAdapter.Set
             }
 
             @Override
-            public void onFailure(Call<ImagesResponse>call, Throwable t) {
+            public void onFailure(@NonNull Call<ImagesResponse>call, @NonNull Throwable t) {
                 // Log error here since request failed
                 Log.e(TAG, t.toString());
             }
@@ -280,7 +290,7 @@ public class DetailActivity extends AppCompatActivity implements ListAdapter.Set
                         , API_KEY);
         call.enqueue(new Callback<TrailerResponse>() {
             @Override
-            public void onResponse(Call<TrailerResponse>call, Response<TrailerResponse> response) {
+            public void onResponse(@NonNull Call<TrailerResponse>call, @NonNull Response<TrailerResponse> response) {
 
 
                 trailersAdapter.setTrailers(response.body().getResults());
@@ -290,7 +300,7 @@ public class DetailActivity extends AppCompatActivity implements ListAdapter.Set
             }
 
             @Override
-            public void onFailure(Call<TrailerResponse>call, Throwable t) {
+            public void onFailure(@NonNull Call<TrailerResponse>call, @NonNull Throwable t) {
                 // Log error here since request failed
                  Log.e(TAG, t.toString());
             }
@@ -310,14 +320,14 @@ public class DetailActivity extends AppCompatActivity implements ListAdapter.Set
                         , API_KEY);
         call.enqueue(new Callback<ReviewsResponse>() {
             @Override
-            public void onResponse(Call<ReviewsResponse>call, Response<ReviewsResponse> response) {
+            public void onResponse(@NonNull Call<ReviewsResponse>call, @NonNull Response<ReviewsResponse> response) {
 
 
                 reviewsAdapter.setReviews(response.body().getResults());
             }
 
             @Override
-            public void onFailure(Call<ReviewsResponse>call, Throwable t) {
+            public void onFailure(@NonNull Call<ReviewsResponse>call, @NonNull Throwable t) {
                 // Log error here since request failed
                 Log.e(TAG, t.toString());
             }

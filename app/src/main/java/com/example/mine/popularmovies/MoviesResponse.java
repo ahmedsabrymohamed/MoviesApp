@@ -1,13 +1,12 @@
 package com.example.mine.popularmovies;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * This class for the Response of the API Request for Images of Specific Movie
  */
 
-public class MoviesResponse {
+class MoviesResponse {
 
         private  int total_pages;
         private List<Movie> results;

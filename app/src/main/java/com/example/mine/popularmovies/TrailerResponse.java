@@ -3,10 +3,10 @@ package com.example.mine.popularmovies;
 import java.util.List;
 
 /**
- * Created by mine on 01/11/17.
+ * This class is used to get the Response of the Trailers of  specific movie
  */
 
-public class TrailerResponse {
+class TrailerResponse {
 
     private List<Trailer> results;
 

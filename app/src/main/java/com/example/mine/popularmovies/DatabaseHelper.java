@@ -4,7 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
+
 
 /**
  * This class inherit from SQLiteOpenHelper class to be used to manipulate the TMDB.db
@@ -55,10 +55,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
     public  boolean findMovie(String movieId){
 
-        String findMovie="Select * From "+DatabaseContract.Movies.TABLE_NAME+" where "+DatabaseContract.Movies.ID+" = "+movieId+" ;";
+        String findMovie="Select * From "+DatabaseContract.Movies.TABLE_NAME
+                +" where "+DatabaseContract.Movies.ID+" = "+movieId+" ;";
         SQLiteDatabase db=getReadableDatabase();
         Cursor cursor=db.rawQuery(findMovie,null);
-        return (cursor.getCount()>0);
+        boolean exist=(cursor.getCount()>0);
+        cursor.close();;
+        return exist;
 
     }
 

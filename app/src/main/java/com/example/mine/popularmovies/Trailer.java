@@ -4,7 +4,7 @@ package com.example.mine.popularmovies;
  * This class for Trailer Data the Key of the Video and the Name of the Trailer
  */
 
-public class Trailer {
+class Trailer {
 
    private String name,key;
 
